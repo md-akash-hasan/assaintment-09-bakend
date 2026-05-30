@@ -22,7 +22,9 @@ const client = new MongoClient(uri, {
   },
 });
 
-const jwks = createRemoteJWKSet(new URL("http://localhost:3000/api/auth/jwks"));
+const jwks = createRemoteJWKSet(
+  new URL(`${process.env.NEXT_PUBLIC_FONTENT_URL}/api/auth/jwks`),
+);
 
 // Improved Verify Middleware
 const verify = async (req, res, next) => {
@@ -50,7 +52,7 @@ const verify = async (req, res, next) => {
 
 async function run() {
   try {
-    await client.connect();
+    // await client.connect();
     const db = client.db("Assaintment-09");
     const carscollection = db.collection("allcars");
     const bookingCarCollection = db.collection("Booking");
