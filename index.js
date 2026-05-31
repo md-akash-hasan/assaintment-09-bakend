@@ -105,13 +105,32 @@ async function run() {
     });
 
     // Get all cars
+    // app.get("/allcars", async (req, res) => {
+    //   const result = await carscollection.find().toArray();
+    //   res.send(result);
+    // });
+    // Get all cars (with search & filter)
     app.get("/allcars", async (req, res) => {
-      const result = await carscollection.find().toArray();
+      const { search, type } = req.query;
+
+      const query = {};
+
+      // Search by car_name — $regex operator
+      if (search) {
+        query.car_name = { $regex: search, $options: "i" }; // "i" = case-insensitive
+      }
+
+      // Filter by car_type
+      if (type) {
+        query.car_type = type;
+      }
+
+      const result = await carscollection.find(query).toArray();
       res.send(result);
     });
 
     // Get single car
-    app.get("/allcar/:id", verify, async (req, res) => {
+    app.get("/allcar/:id", async (req, res) => {
       const { id } = req.params;
       const result = await carscollection.findOne({ _id: new ObjectId(id) });
       res.json(result);
